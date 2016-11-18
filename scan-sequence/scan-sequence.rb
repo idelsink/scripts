@@ -176,7 +176,7 @@ class ScanCommand
     ESC="\e"
     CANCEL="c"
     def pause_before_scan(section)
-        if (@current.pause_before_scan()=="true")
+        if ((@current.pause_before_scan()||@default.pause_before_scan())=="true")
             puts "[#{section}]".light_yellow
             puts "press \'s\' to skip this scan.".blue
             puts "press \'ss\' to skip the remaining scans in this section".blue
