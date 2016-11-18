@@ -170,6 +170,23 @@ class ScanCommand
             return ""
         end
     end
+    # user input constants
+    SKIP="s"
+    SKIP_SECTION="ss"
+    ESC="\e"
+    CANCEL="c"
+    def pause_before_scan(section)
+        if (@current.pause_before_scan()=="true")
+            puts "[#{section}]".light_yellow
+            puts "press \'s\' to skip this scan.".blue
+            puts "press \'ss\' to skip the remaining scans in this section".blue
+            puts "press \'c\' or \'ESC\' to cancel/exit this program".blue
+            puts "press any unlisted key to scan".blue
+            return STDIN.gets.chomp
+        else
+            return ""
+        end
+    end
     private
     def hash_to_parameters(hash)
         command = CommandParameters.new()
@@ -194,17 +211,32 @@ begin
                 command.set_default(hash)
             else
                 command.set(hash)
-                run = true
-                while run
+                run_section = true
+                while run_section
                     cmd = command.get()
                     unless cmd.empty?
-                        puts "command: #{cmd}".blue
-                        system( "cd "+output_path+" && "+cmd )
-                        puts "".red
-                        puts "command returned: #{$?.exitstatus}".blue
+                        puts "----------------------------------------".light_cyan
+                        puts "command to run: #{cmd}".green
+                        case command.pause_before_scan(section)
+                        when ScanCommand::SKIP
+                            # skip this scan
+                            puts "skipping scan".cyan
+                        when ScanCommand::SKIP_SECTION
+                            # skip this section
+                            run_section=false
+                            puts "skipping [#{section}]".cyan
+                        when ScanCommand::ESC
+                            exit 0
+                        else
+                            puts "running scan".light_green
+                            # no PID is caught. So no killing of this sub-process
+                            system( "cd "+output_path+" && "+cmd ) or raise "command exited with error"
+                            puts "run"
+                        end
+                        puts ""
                     else
-                        puts "#{section} done".yellow
-                        run=false
+                        run_section=false
+                        puts "[#{section}]".yellow+" done".green
                     end
                 end
             end
@@ -214,7 +246,9 @@ begin
     end
 rescue ArgumentError => e
     puts e.message.red
-rescue Exception => e
+rescue StandardError => e
     puts e.message.red
     puts "backtrace:\n\t#{e.backtrace.join("\n\t")}"
+rescue SystemExit, Interrupt
+    puts "scan-sequence is now done".magenta
 end
