@@ -134,12 +134,13 @@ class ScanCommand
         zero_padding =@current.zero_padding || @default.zero_padding()
 
         filename=basename
+        filename_count=(scans.to_i-@scan_count.to_i+1).to_s
 
         if scans.to_i > 1
             if zero_padding == "true"
-                filename+=(scans.to_i-@scan_count.to_i).to_s.rjust(scans.size, '0')
+                filename+=filename_count.rjust(scans.size, '0')
             else
-                filename+=(scans.to_i-@scan_count.to_i).to_s
+                filename+=filename_count
             end
         end
 
