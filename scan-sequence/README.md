@@ -11,14 +11,14 @@ scan-sequence config-file [output-path]
 -   ruby
 -   ruby gems: iniparse colorize fileutils
 
-1.  Install ruby
+-   Install ruby
 ```sh
 apt-get install ruby
 # or
 dnf install ruby
 # or ...
 ```
-2. Install gems
+-   Install gems
 ```sh
 gem install iniparse colorize fileutils
 ```
