@@ -230,9 +230,12 @@ begin
                             exit 0
                         else
                             puts "running scan".light_green
+                            start = Time.now
                             # no PID is caught. So no killing of this sub-process
                             system( "cd "+output_path+" && "+cmd ) or raise "command exited with error"
-                            puts "run"
+                            puts ""
+                            finish = Time.now
+                            puts "time taken: #{(finish - start).round(2)}".blue
                         end
                         puts ""
                     else
