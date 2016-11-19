@@ -213,6 +213,7 @@ begin
             else
                 command.set(hash)
                 run_section = true
+                puts "[#{section}]".yellow
                 while run_section
                     cmd = command.get()
                     unless cmd.empty?
